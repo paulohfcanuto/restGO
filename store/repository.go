@@ -2,10 +2,10 @@ package store
 
 import (
 	"fmt"
-	"log"
 	"gopkg.in/mgo.v2"
-	"strings"
 	"gopkg.in/mgo.v2/bson"
+	"log"
+	"strings"
 )
 
 //Repository ...

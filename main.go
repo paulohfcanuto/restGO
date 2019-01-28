@@ -3,10 +3,10 @@ package main
 
 import (
 	"github.com/gorilla/handlers"
+	"github.com/paulohfcanuto/restGO/store"
 	"log"
 	"net/http"
 	"os"
-	"rest-and-go/store"
 )
 
 func main() {

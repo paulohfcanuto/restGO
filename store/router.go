@@ -1,9 +1,9 @@
 package store
 
 import (
+    "github.com/gorilla/mux"
     "log"
     "net/http"
-    "github.com/gorilla/mux"
 )
 
 var controller = &Controller{Repository: Repository{}}
