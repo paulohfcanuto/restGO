@@ -31,7 +31,7 @@ func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 						return nil, fmt.Errorf("there was an error")
 					}
-					return []byte("secret"), nil
+					return []byte("54ff{d}\"D$f%*çm !#+-fffe94"), nil
 				})
 				if err != nil {
 					log.Printf("controller.go - line 30 - %s", error.Error(err))
