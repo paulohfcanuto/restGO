@@ -34,7 +34,8 @@ func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					return []byte("secret"), nil
 				})
 				if err != nil {
-					json.NewEncoder(w).Encode(Exception{Message: error.Error()})
+					log.Printf("controller.go - line 30 - %s", error.Error(err))
+					Error(w, error.Error(err), http.StatusBadRequest)
 					return
 				}
 				if token.Valid {
@@ -42,31 +43,41 @@ func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					context.Set(req, "decoded", token.Claims)
 					next(w, req)
 				} else {
-					json.NewEncoder(w).Encode(Exception{Message: "Invalid authorization token"})
+					log.Printf("controller.go - Invalid authorization token")
+					Error(w, "Invalid authorization token", http.StatusBadRequest)
+					return
 				}
 			}
 		} else {
-			json.NewEncoder(w).Encode(Exception{Message: "An authorization header is required"})
+			log.Printf("controller.go - An authorization header is required")
+			Error(w, "An authorization header is required", http.StatusBadRequest)
+			return
 		}
 	})
+}
+
+func Error(w http.ResponseWriter, error string, code int) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	_ = json.NewEncoder(w).Encode(Exception{Message: error})
 }
 
 // Get Authentication token GET /
 func (c *Controller) GetToken(w http.ResponseWriter, req *http.Request) {
 	var user User
 	_ = json.NewDecoder(req.Body).Decode(&user)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
 		"username": user.Username,
 		"password": user.Password,
 	})
 
-	log.Println("Username: " + user.Username);
-	log.Println("Password: " + user.Password);
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte("54ff{d}\"D$f%*çm !#+-fffe94"))
 	if err != nil {
-		fmt.Println(err)
+		Error(w, "deu merda", http.StatusBadRequest)
 	}
-	json.NewEncoder(w).Encode(JwtToken{Token: tokenString})
+	_ = json.NewEncoder(w).Encode(JwtToken{Token: tokenString})
 }
 
 // Index GET /
